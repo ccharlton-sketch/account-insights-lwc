@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Escalate Account</label>
+    <protected>false</protected>
+    <values>
+        <field>Title__c</field>
+        <value xsi:type="xsd:string">Escalate Account</value>
+    </values>
+    <values>
+        <field>Description__c</field>
+        <value xsi:type="xsd:string">Escalate this account for additional support or attention.</value>
+    </values>
+    <values>
+        <field>FlowApiName__c</field>
+        <value xsi:type="xsd:string">Screen_Flow_Escalate</value>
+    </values>
+    <values>
+        <field>IconName__c</field>
+        <value xsi:type="xsd:string">utility:warning</value>
+    </values>
+    <values>
+        <field>IconVariant__c</field>
+        <value xsi:type="xsd:string">warning</value>
+    </values>
+    <values>
+        <field>SelectionCriteria__c</field>
+        <value xsi:type="xsd:string">Recommend when the account shows signs of risk: no meaningful activity in 30+ days, a declining or churn-risk sentiment in recent notes, or an open case/issue that has gone unresolved for an extended period.</value>
+    </values>
+</CustomMetadata>

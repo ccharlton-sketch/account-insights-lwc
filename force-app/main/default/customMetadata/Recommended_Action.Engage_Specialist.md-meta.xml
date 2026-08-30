@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Engage Specialist</label>
+    <protected>false</protected>
+    <values>
+        <field>Title__c</field>
+        <value xsi:type="xsd:string">Engage a Specialist</value>
+    </values>
+    <values>
+        <field>Description__c</field>
+        <value xsi:type="xsd:string">Loop in a specialist to help move this account forward.</value>
+    </values>
+    <values>
+        <field>FlowApiName__c</field>
+        <value xsi:type="xsd:string">Engage_A_Specialist</value>
+    </values>
+    <values>
+        <field>IconName__c</field>
+        <value xsi:type="xsd:string">utility:adduser</value>
+    </values>
+    <values>
+        <field>IconVariant__c</field>
+        <value xsi:type="xsd:string">brand</value>
+    </values>
+    <values>
+        <field>SelectionCriteria__c</field>
+        <value xsi:type="xsd:string">Recommend when the account's needs go beyond the core account team's expertise, such as a complex technical requirement, a large or strategic opportunity, or a request touching a specialized product area.</value>
+    </values>
+</CustomMetadata>

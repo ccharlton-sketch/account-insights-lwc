@@ -1,0 +1,136 @@
+<template>
+    <lightning-modal-body>
+        <div class="custom-header">
+            <lightning-icon icon-name="utility:einstein" size="small" variant="brand"></lightning-icon>
+            <h2 class="slds-text-heading_medium header-title">AI Knowledge &amp; Insights</h2>
+            <lightning-button-icon
+                icon-name="utility:close"
+                variant="bare"
+                alternative-text="Close"
+                onclick={handleClose}
+            ></lightning-button-icon>
+        </div>
+
+        <div class="slds-p-around_medium">
+            <h3 class="slds-text-heading_small slds-m-bottom_small section-title">Performance Highlights</h3>
+            <template if:true={isLoadingHighlights}>
+                <div class="loading-state">
+                    <lightning-spinner alternative-text="Loading performance highlights" size="small"></lightning-spinner>
+                    <p class="loading-label">Loading performance highlights…</p>
+                </div>
+            </template>
+            <template if:false={isLoadingHighlights}>
+                <template if:true={highlightsError}>
+                    <p class="slds-text-color_error">{highlightsError}</p>
+                </template>
+                <template if:false={highlightsError}>
+                    <div class="slds-grid slds-wrap slds-gutters">
+                        <div class="slds-col slds-size_1-of-3">
+                            <div class="metric-card">
+                                <div class="metric-label">Open Opportunity Amount</div>
+                                <lightning-formatted-number
+                                    class="metric-value"
+                                    value={highlights.openOpportunityAmount}
+                                    format-style="currency"
+                                    currency-code="USD"
+                                ></lightning-formatted-number>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-3">
+                            <div class="metric-card">
+                                <div class="metric-label">Closed This Year</div>
+                                <lightning-formatted-number
+                                    class="metric-value"
+                                    value={highlights.closedThisYearAmount}
+                                    format-style="currency"
+                                    currency-code="USD"
+                                ></lightning-formatted-number>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-3">
+                            <div class="metric-card">
+                                <div class="metric-label">Customer Total Spend</div>
+                                <lightning-formatted-number
+                                    class="metric-value"
+                                    value={highlights.customerTotalSpend}
+                                    format-style="currency"
+                                    currency-code="USD"
+                                ></lightning-formatted-number>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </template>
+
+            <h3 class="slds-text-heading_small slds-m-vertical_medium section-title">Needs Attention</h3>
+            <template if:true={isLoadingInsights}>
+                <div class="loading-state">
+                    <lightning-spinner alternative-text="Gathering Account Insights" size="small"></lightning-spinner>
+                    <p class="loading-label">Gathering Account Insights…</p>
+                </div>
+            </template>
+            <template if:false={isLoadingInsights}>
+                <template if:true={insightsError}>
+                    <p class="slds-text-color_error">{insightsError}</p>
+                </template>
+                <template if:false={insightsError}>
+                    <div class="insights-narrative">
+                        <lightning-formatted-rich-text value={insightsHtml}></lightning-formatted-rich-text>
+                    </div>
+                </template>
+            </template>
+
+            <h3 class="slds-text-heading_small slds-m-vertical_medium section-title">Recommended Actions</h3>
+            <template if:false={activeFlow}>
+                <template if:true={isLoadingActions}>
+                    <div class="loading-state">
+                        <lightning-spinner alternative-text="Finding recommended actions" size="small"></lightning-spinner>
+                        <p class="loading-label">Finding recommended actions…</p>
+                    </div>
+                </template>
+                <template if:false={isLoadingActions}>
+                    <template if:true={actionsError}>
+                        <p class="slds-text-color_error">{actionsError}</p>
+                    </template>
+                    <template if:true={hasNoRecommendedActions}>
+                        <p>No recommended actions available right now.</p>
+                    </template>
+                    <template if:false={actionsError}>
+                        <div class="slds-grid slds-wrap slds-gutters">
+                            <template for:each={recommendedActions} for:item="action">
+                                <div class="slds-col slds-size_1-of-3" key={action.actionKey}>
+                                    <div class="action-card">
+                                        <lightning-icon icon-name={action.iconName} variant={action.iconVariant} size="small"></lightning-icon>
+                                        <h4 class="action-title">{action.title}</h4>
+                                        <p class="action-description">{action.description}</p>
+                                        <button
+                                            class="slds-button slds-button_link action-link"
+                                            data-action-key={action.actionKey}
+                                            onclick={handleActionClick}
+                                        >Launch &rarr;</button>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                </template>
+            </template>
+            <template if:true={activeFlow}>
+                <div class="flow-container">
+                    <lightning-button
+                        variant="base"
+                        icon-name="utility:back"
+                        label="Back to Recommended Actions"
+                        onclick={handleBackToActions}
+                        class="slds-m-bottom_small"
+                    ></lightning-button>
+                    <lightning-flow
+                        flow-api-name={activeFlow.flowApiName}
+                        flow-input-variables={flowInputVariables}
+                        onstatuschange={handleFlowStatusChange}
+                    ></lightning-flow>
+                </div>
+            </template>
+        </div>
+    </lightning-modal-body>
+</template>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPromptTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <activeVersionIdentifier>sz3wdYrfIVqmFuntxLRh/2+ps5SG703du8uV8nAjXII=_2</activeVersionIdentifier>
+    <developerName>Next_Steps_AI_Recommendation</developerName>
+    <masterLabel>Next Steps AI Recommendation</masterLabel>
+    <overridable>false</overridable>
+    <templateVersions>
+        <content>Return this as a JSON list
+
+The title of it is probably &quot;Next Best Action&quot;, Actions is the list, then the list themselves
+[Escalate_Account, Create_Close_Plan, Engage_Specialist]
+</content>
+        <fileDroppingStrategy>{&quot;dropFilesBy&quot;:&quot;LAST_MODIFIED_DATE&quot;,&quot;dropFileStartingWith&quot;:&quot;OLDEST&quot;}</fileDroppingStrategy>
+        <inputs>
+            <apiName>account</apiName>
+            <definition>SOBJECT://Account</definition>
+            <masterLabel>account</masterLabel>
+            <referenceName>Input:account</referenceName>
+            <required>true</required>
+        </inputs>
+        <isCitationEnabled>false</isCitationEnabled>
+        <primaryModel>sfdc_ai__DefaultGPT5Mini</primaryModel>
+        <responseFormat>JSON</responseFormat>
+        <status>Published</status>
+        <versionIdentifier>sz3wdYrfIVqmFuntxLRh/2+ps5SG703du8uV8nAjXII=_1</versionIdentifier>
+    </templateVersions>
+    <templateVersions>
+        <content>Return this as a JSON list
+
+The title of it is probably &quot;Next Best Action&quot;, Actions is the list, then the list themselves
+[Escalate_Account, Create_Close_Plan, Engage_Specialist]
+
+Return Format
+{
+ &quot;title&quot;: &lt;assess&gt;,
+ &quot;Actions&quot;: [
+  &quot;&lt;option 1&gt;&quot;,
+  &quot;&lt;option 2&gt;&quot;,
+  &quot;&lt;option 3&gt;&quot;
+ ]
+}
+</content>
+        <fileDroppingStrategy>{&quot;dropFilesBy&quot;:&quot;LAST_MODIFIED_DATE&quot;,&quot;dropFileStartingWith&quot;:&quot;OLDEST&quot;}</fileDroppingStrategy>
+        <inputs>
+            <apiName>account</apiName>
+            <definition>SOBJECT://Account</definition>
+            <masterLabel>account</masterLabel>
+            <referenceName>Input:account</referenceName>
+            <required>true</required>
+        </inputs>
+        <isCitationEnabled>false</isCitationEnabled>
+        <primaryModel>sfdc_ai__DefaultGPT5Mini</primaryModel>
+        <responseFormat>JSON</responseFormat>
+        <status>Published</status>
+        <templateFormat>FormulaExpression</templateFormat>
+        <versionIdentifier>sz3wdYrfIVqmFuntxLRh/2+ps5SG703du8uV8nAjXII=_2</versionIdentifier>
+    </templateVersions>
+    <type>einstein_gpt__flex</type>
+    <visibility>Global</visibility>
+</GenAiPromptTemplate>

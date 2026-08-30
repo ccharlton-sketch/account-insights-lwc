@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Create Close Plan</label>
+    <protected>false</protected>
+    <values>
+        <field>Title__c</field>
+        <value xsi:type="xsd:string">Create a Close Plan</value>
+    </values>
+    <values>
+        <field>Description__c</field>
+        <value xsi:type="xsd:string">Build a plan to advance and close open opportunities.</value>
+    </values>
+    <values>
+        <field>FlowApiName__c</field>
+        <value xsi:type="xsd:string">Screen_Flow_Create_a_Close_plan</value>
+    </values>
+    <values>
+        <field>IconName__c</field>
+        <value xsi:type="xsd:string">utility:opportunity</value>
+    </values>
+    <values>
+        <field>IconVariant__c</field>
+        <value xsi:type="xsd:string">success</value>
+    </values>
+    <values>
+        <field>SelectionCriteria__c</field>
+        <value xsi:type="xsd:string">Recommend when the account has one or more open Opportunities, especially ones nearing their close date or with a meaningful open amount, that would benefit from a structured plan to drive them to close.</value>
+    </values>
+</CustomMetadata>
