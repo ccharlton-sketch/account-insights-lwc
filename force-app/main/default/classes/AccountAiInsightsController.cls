@@ -7,6 +7,46 @@
  */
 public with sharing class AccountAiInsightsController {
 
+    private static final String CACHE_PARTITION_NAME = 'local.AIInsights';
+    private static final Integer CACHE_TTL_SECONDS = 1200; // 20 minutes
+
+    /**
+     * Returns the org cache partition, or null if it's missing/unavailable (e.g. no capacity
+     * allocated in this org). Callers must treat null as "caching is unavailable" and fall
+     * through to a live call rather than erroring.
+     */
+    private static Cache.OrgPartition getCachePartition() {
+        try {
+            return Cache.Org.getPartition(CACHE_PARTITION_NAME);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private static String getCachedString(String key) {
+        Cache.OrgPartition partition = getCachePartition();
+        if (partition == null) {
+            return null;
+        }
+        try {
+            return partition.contains(key) ? (String) partition.get(key) : null;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private static void putCachedString(String key, String value) {
+        Cache.OrgPartition partition = getCachePartition();
+        if (partition == null) {
+            return;
+        }
+        try {
+            partition.put(key, value, CACHE_TTL_SECONDS);
+        } catch (Exception e) {
+            // Cache unavailable or over capacity - degrade to always-live, no user-facing impact.
+        }
+    }
+
     /**
      * Wrapper for the Performance Highlights metric cards
      */
@@ -85,6 +125,12 @@ public with sharing class AccountAiInsightsController {
             throw ahe;
         }
 
+        String cacheKey = 'narrative' + accountId;
+        String cachedNarrative = getCachedString(cacheKey);
+        if (cachedNarrative != null) {
+            return cachedNarrative;
+        }
+
         try {
             ConnectApi.EinsteinPromptTemplateGenerationsInput promptGenerationsInput =
                 new ConnectApi.EinsteinPromptTemplateGenerationsInput();
@@ -113,7 +159,9 @@ public with sharing class AccountAiInsightsController {
                 throw ahe;
             }
 
-            return generationsOutput.generations[0].text;
+            String narrative = generationsOutput.generations[0].text;
+            putCachedString(cacheKey, narrative);
+            return narrative;
         } catch (AuraHandledException ahe) {
             throw ahe;
         } catch (Exception e) {
@@ -147,6 +195,16 @@ public with sharing class AccountAiInsightsController {
             AuraHandledException ahe = new AuraHandledException('Account Id is required.');
             ahe.setMessage('Account Id is required.');
             throw ahe;
+        }
+
+        String cacheKey = 'actions' + accountId;
+        String cachedActionsJson = getCachedString(cacheKey);
+        if (cachedActionsJson != null) {
+            try {
+                return (List<RecommendedAction>) JSON.deserialize(cachedActionsJson, List<RecommendedAction>.class);
+            } catch (Exception e) {
+                // Cached JSON didn't deserialize cleanly (e.g. wrapper shape changed) - regenerate below.
+            }
         }
 
         Map<String, Recommended_Action__mdt> catalogByKey = new Map<String, Recommended_Action__mdt>();
@@ -188,7 +246,9 @@ public with sharing class AccountAiInsightsController {
             throw ahe;
         }
 
-        return resolveRecommendedActions(parseActionKeys(responseText), catalogByKey);
+        List<RecommendedAction> results = resolveRecommendedActions(parseActionKeys(responseText), catalogByKey);
+        putCachedString(cacheKey, JSON.serialize(results));
+        return results;
     }
 
     /**
