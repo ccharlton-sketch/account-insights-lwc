@@ -95,3 +95,12 @@ System.debug(AccountAiInsightsController.getRecommendedActions('<some Account Id
 Then open an Account record in the browser, click **AI Knowledge & Insights**, and confirm all three sections load, a Recommended Action card launches its Flow in place, and the back button returns to the card list.
 
 **To confirm caching is active:** close the modal and reopen it on the same Account within 20 minutes — the Needs Attention and Recommended Actions sections should populate near-instantly (a cache hit is a few ms; a live generation is typically several seconds). If it's just as slow the second time, caching isn't active for this org — see step 2.
+
+## 8. (Optional) Customize the Performance Highlights metrics
+
+The three metric cards (Open Opportunity Amount, Closed This Year, Customer Total Spend) ship hardcoded to Opportunity data, but they're just Apex + markup — nothing about them is specific to your org's data model. If you want to surface different metrics (e.g. Case counts, a custom object rollup, anything queryable), that's a two-file change:
+
+- `force-app/main/default/classes/AccountAiInsightsController.cls` — the `PerformanceHighlights` wrapper and `getPerformanceHighlights()` method.
+- `force-app/main/default/lwc/aiKnowledgeInsightsModal/aiKnowledgeInsightsModal.html` — the label text and value binding for each metric card.
+
+Full walkthrough with a worked example: [ARCHITECTURE.md § Customizing Performance Highlights](ARCHITECTURE.md#customizing-performance-highlights).

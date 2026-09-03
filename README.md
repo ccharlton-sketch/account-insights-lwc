@@ -2,14 +2,14 @@
 
 A Salesforce Account-page panel that gives reps three things in one click:
 
-1. **Performance Highlights** — Open Opportunity Amount, Closed This Year, and Customer Total Spend, computed live from Opportunity data.
+1. **Performance Highlights** — Open Opportunity Amount, Closed This Year, and Customer Total Spend, computed live from Opportunity data. These three metrics are hardcoded but fully customizable to your own — see [Customizing Performance Highlights](ARCHITECTURE.md#customizing-performance-highlights).
 2. **Needs Attention** — an AI-generated narrative summary of the account, rendered from markdown.
 3. **Recommended Actions** — up to 3 "next best action" cards, chosen per-account by an Einstein Prompt Template from a growable catalog of candidate actions. Each card launches a Screen Flow in place, with a back button to return to the card list.
 
 This repo contains the full source: Apex controller + tests, three Lightning Web Components, a Custom Metadata Type that acts as the action catalog, a Platform Cache partition so repeat views of the same account within 20 minutes skip re-running the AI generations, and the Prompt Template metadata for action selection.
 
 - **Installing this?** Start with [INSTALL.md](INSTALL.md).
-- **Want to understand how it fits together, or add a new recommended action?** See [ARCHITECTURE.md](ARCHITECTURE.md).
+- **Want to understand how it fits together, add a new recommended action, or swap in your own Performance Highlights metrics?** See [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ## Prerequisites
 

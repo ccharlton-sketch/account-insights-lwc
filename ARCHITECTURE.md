@@ -53,6 +53,26 @@ One required input, `Input:account` (Account SObject reference). `responseFormat
 - **`aiKnowledgeInsightsModal`** — not exposed; only ever opened programmatically by the button. Owns all state and both Apex/ConnectApi calls. Contains the click-to-launch-flow-in-place logic: clicking a Recommended Action card sets `activeFlow` to that card's data (matched by `actionKey`), which swaps the card grid for a `lightning-flow` bound to `activeFlow.flowApiName`, passing the account record as a flow input variable named `account`. A "Back" button (or the flow finishing) clears `activeFlow` and returns to the grid — the modal itself never closes during this, so the rep never loses their place.
 - **`markdownUtils`** — no UI, just an exported `convertMarkdownToHtml()` function. A small hand-rolled regex converter (headers, bold, ordered/unordered lists, tables, horizontal rules) — no external markdown library. Output is fed into `lightning-formatted-rich-text`, which sanitizes to a safe tag allowlist, so this is safe by construction even though the source text comes from a model.
 
+## Customizing Performance Highlights
+
+The three metric cards (Open Opportunity Amount, Closed This Year, Customer Total Spend) are **not config-driven** — they're hardcoded in exactly two places, and both need to change together:
+
+1. **`AccountAiInsightsController.cls`** — the `PerformanceHighlights` wrapper class declares the three `@AuraEnabled` fields, and `getPerformanceHighlights(Id accountId)` is the only method that populates them (today, one grouped SOQL aggregate on Opportunity, summed in Apex — see above).
+2. **`aiKnowledgeInsightsModal.html`** — each of the 3 `metric-card` `<div>`s hardcodes its label text and its `lightning-formatted-number` binding (`value={highlights.<fieldName>}`, plus `format-style`/`currency-code`). The field name in the markup has to match the field name in the Apex wrapper by hand — nothing generates one from the other.
+
+**`aiKnowledgeInsightsModal.js` needs no changes for this.** `loadHighlights()` just assigns whatever the Apex wrapper returns to `this.highlights` as-is (`this.highlights = data;`) — it has no per-field knowledge, so any shape the wrapper takes flows straight through to the template.
+
+### To replace a metric (e.g. swap "Customer Total Spend" for open Case count)
+
+1. In `PerformanceHighlights`, add or rename a field: `@AuraEnabled public Integer openCaseCount { get; set; }` — initialize it to `0` in the constructor, matching the existing pattern for the other three.
+2. In `getPerformanceHighlights()`, add whatever logic populates it. It doesn't have to be Opportunity-based or even an `AggregateResult` — a plain `[SELECT COUNT(Id) FROM Case WHERE AccountId = :accountId AND IsClosed = false]` works fine. Keep the assignment inside the existing `try/catch` that throws `AuraHandledException` on error, same as the current three.
+3. In `aiKnowledgeInsightsModal.html`, update the matching `metric-card` block: change the `metric-label` text, and point `value={highlights.<fieldName>}` at the new field. If the metric isn't a currency amount, drop `format-style="currency"` / `currency-code="USD"` — use `format-style="decimal"` for a plain count, or swap `lightning-formatted-number` for a different formatted-output component entirely if it's non-numeric (e.g. `lightning-formatted-text` for a status string).
+4. Update `AccountAiInsightsControllerTest.cls` — `testGetPerformanceHighlightsAggregatesCorrectly` asserts exact values against seeded test-data Opportunities; its `@TestSetup` data and assertions need to match whatever you're now aggregating.
+
+### To add a 4th metric instead of replacing one
+
+Same three steps as above (new wrapper field, new logic in `getPerformanceHighlights()`, new `metric-card` block in the HTML), except you're adding a 4th `slds-col` rather than replacing one of the existing three. Adjust the grid fractions on all four columns from `slds-size_1-of-3` to `slds-size_1-of-4` so they stay evenly spaced.
+
 ## Caching
 
 The two AI-generation methods — `getAccountInsightsNarrative` and `getRecommendedActions` — cache their *resolved* result (the narrative markdown string; `JSON.serialize()` of the final `List<RecommendedAction>`) in an Org-scoped Platform Cache partition, `local.AIInsights` (deployed as `force-app/main/default/cachePartitions/AIInsights.cachePartition-meta.xml`), keyed by Account Id, TTL 20 minutes (`CACHE_TTL_SECONDS = 1200`). `getPerformanceHighlights` is deliberately never cached — it's a cheap live SOQL query and should always be current.
