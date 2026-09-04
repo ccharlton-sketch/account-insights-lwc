@@ -1,4 +1,4 @@
-# AI Knowledge & Insights (Ferguson)
+# Account Insights LWC
 
 A Salesforce Account-page panel that gives reps three things in one click:
 

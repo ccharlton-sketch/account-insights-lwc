@@ -5,7 +5,7 @@
       "default": true
     }
   ],
-  "name": "Ferguson",
+  "name": "account-insights-lwc",
   "namespace": "",
   "sfdcLoginUrl": "https://login.salesforce.com",
   "sourceApiVersion": "67.0"
